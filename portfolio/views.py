@@ -35,19 +35,15 @@ class ContactView(APIView):
         serializer = ContactMessageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            # Send email notification
-            try:
-                send_mail(
-                    subject=f"New message from {serializer.validated_data['name']}",
-                    message=f"Name: {serializer.validated_data['name']}\n"
-                            f"Email: {serializer.validated_data['email']}\n\n"
-                            f"Message:\n{serializer.validated_data['message']}",
-                    from_email=settings.EMAIL_HOST_USER,
-                    recipient_list=[settings.EMAIL_RECEIVER],
-                    fail_silently=True,
-                )
-            except Exception:
-                pass
+            send_mail(
+                subject=f"New message from {serializer.validated_data['name']}",
+                message=f"Name: {serializer.validated_data['name']}\n"
+                        f"Email: {serializer.validated_data['email']}\n\n"
+                        f"Message:\n{serializer.validated_data['message']}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[settings.EMAIL_RECEIVER],
+                fail_silently=False,
+            )
             return Response(
                 {'message': 'Message received! I will get back to you soon.'},
                 status=status.HTTP_201_CREATED
