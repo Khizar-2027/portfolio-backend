@@ -33,20 +33,28 @@ class ProjectDetailView(generics.RetrieveAPIView):
 class ContactView(APIView):
     def post(self, request):
         serializer = ContactMessageSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
-            send_mail(
-                subject=f"New message from {serializer.validated_data['name']}",
-                message=f"Name: {serializer.validated_data['name']}\n"
-                        f"Email: {serializer.validated_data['email']}\n\n"
-                        f"Message:\n{serializer.validated_data['message']}",
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[settings.EMAIL_RECEIVER],
-                fail_silently=False,
-            )
+
+            try:
+                send_mail(
+                    subject=f"New message from {serializer.validated_data['name']}",
+                    message=f"Name: {serializer.validated_data['name']}\n"
+                            f"Email: {serializer.validated_data['email']}\n\n"
+                            f"Message:\n{serializer.validated_data['message']}",
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[settings.EMAIL_RECEIVER],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                print("EMAIL ERROR:", str(e))
+                raise
+
             return Response(
-                {'message': 'Message received! I will get back to you soon.'},
+                {"message": "Message received!"},
                 status=status.HTTP_201_CREATED
             )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
