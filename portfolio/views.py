@@ -49,7 +49,6 @@ class ContactView(APIView):
                 )
             except Exception as e:
                 print("EMAIL ERROR:", str(e))
-                raise
 
             return Response(
                 {"message": "Message received!"},
