@@ -1,6 +1,6 @@
 import os
 import dj_database_url
-from .settings import BASE_DIR
+from .settings import *
 
 ALLOWED_HOSTS = [os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost')]
 CSRF_TRUSTED_ORIGINS = [
